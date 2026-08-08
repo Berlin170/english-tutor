@@ -1,11 +1,12 @@
 /**
- * The AI Gateway accepts either an API key or, on a Vercel deployment, an
- * automatic per-request OIDC token. So the only genuinely unauthenticated
- * case is local development with an empty .env.local.
+ * The AI Gateway accepts either an API key or a Vercel OIDC token. `vercel link`
+ * writes a development OIDC token into .env.local and deployments get one per
+ * request, so the only unauthenticated case is a project that has neither.
  */
 export function gatewayAuthError(): string | null {
   if (process.env.AI_GATEWAY_API_KEY) return null;
-  if (process.env.VERCEL) return null; // OIDC handles auth on Vercel.
+  if (process.env.VERCEL_OIDC_TOKEN) return null; // written by `vercel link`
+  if (process.env.VERCEL) return null; // running on a Vercel deployment
 
-  return "AI_GATEWAY_API_KEY is not set. Add it to .env.local and restart the dev server.";
+  return "No AI Gateway credentials. Either run `vercel link` then `vercel env pull` to get an OIDC token, or put AI_GATEWAY_API_KEY in .env.local. Restart the dev server afterwards.";
 }
