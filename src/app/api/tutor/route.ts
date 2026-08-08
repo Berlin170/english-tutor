@@ -25,6 +25,18 @@ type Body = {
   learnerName?: string;
 };
 
+/**
+ * How much correcting Sara does out loud, by level. Beginners learn from
+ * hearing the right form said back to them; advanced learners lose the thread
+ * of the conversation if every slip is spoken, so their corrections stay on
+ * screen only.
+ */
+const SPOKEN_CORRECTION_RULE: Record<Level, string> = {
+  beginner: `SPOKEN CORRECTIONS: if the learner made an important mistake, say the correct words out loud once, in under eight words, then carry straight on with the conversation. For example: "We say 'five years' - and what do you like there?" Correct at most one thing per turn, and say nothing about small slips.`,
+  intermediate: `SPOKEN CORRECTIONS: only say a correction out loud when the mistake would confuse a listener or the learner repeats it often. Keep it to a few words, then continue the conversation. Otherwise say nothing about mistakes - the learner reads them on screen.`,
+  advanced: `SPOKEN CORRECTIONS: never correct out loud. Keep the conversation natural and let the learner read their corrections on screen.`,
+};
+
 export async function POST(req: Request) {
   const authError = modelAuthError();
   if (authError) return Response.json({ error: authError }, { status: 500 });
@@ -39,7 +51,8 @@ export async function POST(req: Request) {
   })}
 
 YOU ARE ON A LIVE VOICE CALL. The "reply" field is converted to speech and played to the learner, so it must sound like real speech: no lists, no markdown, no emoji, no stage directions.
-Put all corrections in the other fields - never read the corrections out loud unless the learner asks for them.
+${SPOKEN_CORRECTION_RULE[body.level] ?? SPOKEN_CORRECTION_RULE.beginner}
+The full corrections always go in the other fields regardless - they are shown on screen.
 If the learner has said nothing yet, greet them and start the scenario with an easy opening question.`;
 
   // Providers reject an empty message list, so the opening greeting is driven
