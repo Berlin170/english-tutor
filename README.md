@@ -20,16 +20,15 @@ travel/airport, grammar drills.
 
 ## Setup
 
-**1. Add your API key**
+**1. Add your Claude API key**
 
-Open `.env.local` and paste an AI Gateway key:
+Open `.env.local` and paste your key:
 
 ```
-AI_GATEWAY_API_KEY=your_key_here
+ANTHROPIC_API_KEY=sk-ant-your-key-here
 ```
 
-Get one free at <https://vercel.com/dashboard> → **AI Gateway** → **API Keys**.
-The key works for Claude, GPT and Gemini through one endpoint.
+Get one at <https://console.anthropic.com> → **API Keys**.
 
 **2. Run it**
 
@@ -62,17 +61,29 @@ needs **Google Chrome** or **Microsoft Edge** on desktop, or Chrome on Android.
 Speaking speed and Sara's voice can be changed in the sidebar — slow her down
 if she talks too fast.
 
-## Changing the model
+## Cost and changing the model
 
-The model is one line in [`src/lib/tutor.ts`](src/lib/tutor.ts):
+The model is one line in [`src/lib/model.ts`](src/lib/model.ts):
 
 ```ts
-export const MODEL = "anthropic/claude-sonnet-5";
+export const MODEL = anthropic("claude-haiku-4-5");
 ```
 
-Any AI Gateway model id works, e.g. `openai/gpt-5.4-mini` or
-`google/gemini-3-flash`. A smaller model is cheaper and faster on the call;
-a bigger one gives better corrections.
+Haiku 4.5 is the cheapest and fastest Claude model, and it answers without a
+thinking pause — which is what keeps a live call feeling like a real
+conversation.
+
+| Model id | Price per 1M tokens (in / out) | Roughly what $5 buys |
+| --- | --- | --- |
+| `claude-haiku-4-5` | $1 / $5 | ~1,200 messages |
+| `claude-sonnet-5` | $2 / $10 (intro, until 31 Aug 2026) | ~600 messages |
+| `claude-opus-5` | $5 / $25 | ~250 messages |
+
+Swap the id to trade cost for teaching quality. Note that Opus 5 thinks before
+answering by default, which adds a noticeable pause on the call — it suits the
+Grammar Check page better than the live call.
+
+Track your spend at <https://console.anthropic.com> → **Usage**.
 
 ## Your data
 

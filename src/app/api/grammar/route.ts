@@ -1,7 +1,7 @@
 import { generateText, Output } from "ai";
-import { gatewayAuthError } from "@/lib/gateway";
+import { MAX_REPORT_TOKENS, MODEL, modelAuthError } from "@/lib/model";
 import { grammarSchema } from "@/lib/schemas";
-import { MODEL, type ExplainLang, type Level } from "@/lib/tutor";
+import type { ExplainLang, Level } from "@/lib/tutor";
 
 export const maxDuration = 60;
 
@@ -13,7 +13,7 @@ const LANG_RULE: Record<ExplainLang, string> = {
 };
 
 export async function POST(req: Request) {
-  const authError = gatewayAuthError();
+  const authError = modelAuthError();
   if (authError) return Response.json({ error: authError }, { status: 500 });
 
   const {
@@ -34,7 +34,7 @@ export async function POST(req: Request) {
 ${LANG_RULE[explainLang]}
 Be accurate but encouraging. Do not invent mistakes that are not there - if the text is already correct, return an empty issues list and say so warmly.`,
       prompt: `Check this text:\n\n"""\n${text.slice(0, 6000)}\n"""`,
-      maxOutputTokens: 2000,
+      maxOutputTokens: MAX_REPORT_TOKENS,
       output: Output.object({ schema: grammarSchema }),
     });
 

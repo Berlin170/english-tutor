@@ -1,8 +1,7 @@
 import { generateText, Output, type ModelMessage } from "ai";
-import { gatewayAuthError } from "@/lib/gateway";
+import { MAX_TURN_TOKENS, MODEL, modelAuthError } from "@/lib/model";
 import { turnSchema } from "@/lib/schemas";
 import {
-  MODEL,
   buildSystemPrompt,
   type ExplainLang,
   type Level,
@@ -27,7 +26,7 @@ type Body = {
 };
 
 export async function POST(req: Request) {
-  const authError = gatewayAuthError();
+  const authError = modelAuthError();
   if (authError) return Response.json({ error: authError }, { status: 500 });
 
   const body = (await req.json()) as Body;
@@ -61,7 +60,7 @@ If the learner has said nothing yet, greet them and start the scenario with an e
       model: MODEL,
       system,
       messages,
-      maxOutputTokens: 900,
+      maxOutputTokens: MAX_TURN_TOKENS,
       output: Output.object({ schema: turnSchema }),
     });
 

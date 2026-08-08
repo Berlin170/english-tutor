@@ -3,9 +3,8 @@ import {
   streamText,
   type UIMessage,
 } from "ai";
-import { gatewayAuthError } from "@/lib/gateway";
+import { MAX_TURN_TOKENS, MODEL, modelAuthError } from "@/lib/model";
 import {
-  MODEL,
   buildSystemPrompt,
   type ExplainLang,
   type Level,
@@ -19,7 +18,7 @@ export const maxDuration = 60;
  * text-to-speech).
  */
 export async function POST(req: Request) {
-  const authError = gatewayAuthError();
+  const authError = modelAuthError();
   if (authError) return new Response(authError, { status: 500 });
 
   const {
@@ -57,7 +56,7 @@ Keep the whole message short - a learner should be able to read it in under 20 s
     model: MODEL,
     system,
     messages: await convertToModelMessages(messages),
-    maxOutputTokens: 900,
+    maxOutputTokens: MAX_TURN_TOKENS,
   });
 
   return result.toUIMessageStreamResponse();

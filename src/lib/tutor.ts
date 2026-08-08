@@ -7,8 +7,6 @@
 export type Level = "beginner" | "intermediate" | "advanced";
 export type ExplainLang = "english" | "roman-urdu" | "urdu";
 
-export const MODEL = "anthropic/claude-sonnet-5";
-
 export const LEVELS: { id: Level; label: string; hint: string }[] = [
   {
     id: "beginner",
