@@ -123,7 +123,13 @@ export default function ProgressPage() {
                   className="flex items-center justify-between rounded-lg border border-card-border px-3 py-2 text-sm"
                 >
                   <span>
-                    {s.kind === "call" ? "🎙️" : s.kind === "chat" ? "💬" : "✍️"}{" "}
+                    {s.kind === "call"
+                      ? "🎙️"
+                      : s.kind === "chat"
+                        ? "💬"
+                        : s.kind === "quiz"
+                          ? "📖"
+                          : "✍️"}{" "}
                     {getScenario(s.scenarioId).label}
                     <span className="block text-xs text-muted">
                       {new Date(s.at).toLocaleString()}

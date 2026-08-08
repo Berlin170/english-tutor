@@ -9,6 +9,15 @@ import { useSettings } from "@/lib/useSettings";
 
 const MODES = [
   {
+    href: "/tenses",
+    emoji: "📖",
+    title: "Learn Tenses",
+    subtitle: "Pehle grammar samjho",
+    body: "Past, present and future - all 12 tenses with formulas, examples and the mistakes Urdu speakers make most. Read this before your first call.",
+    cta: "Open the lesson",
+    accent: "from-sky-500 to-blue-500",
+  },
+  {
     href: "/call",
     emoji: "🎙️",
     title: "Live Call",
@@ -70,8 +79,14 @@ export default function DashboardPage() {
 
         <div className="mt-6 flex flex-wrap gap-3">
           <Link
-            href="/call"
+            href="/tenses"
             className="rounded-xl bg-accent px-5 py-3 font-semibold text-white shadow-sm transition-transform hover:scale-[1.02]"
+          >
+            📖 Learn tenses first
+          </Link>
+          <Link
+            href="/call"
+            className="rounded-xl border border-card-border bg-card px-5 py-3 font-semibold transition-colors hover:border-accent"
           >
             🎙️ Start a live call
           </Link>
@@ -109,7 +124,7 @@ export default function DashboardPage() {
 
       <section>
         <h2 className="mb-4 text-xl font-bold">Choose how you want to practise</h2>
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {MODES.map((mode) => (
             <Link
               key={mode.href}
