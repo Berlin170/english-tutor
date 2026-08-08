@@ -1,36 +1,98 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Speak English with Sara — Live English Tutor Dashboard
 
-## Getting Started
+An English speaking + grammar practice dashboard for Urdu speakers. You talk,
+an AI teacher called **Sara** listens, replies out loud like a phone call, and
+shows every mistake with the reason in Roman Urdu.
 
-First, run the development server:
+## What is inside
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+| Page | What it does |
+| --- | --- |
+| `/` Dashboard | Your level, language for explanations, practice topic, and your stats. |
+| `/call` **Live Call** | A real call: you speak into the mic, Sara answers with her voice. Corrections appear under each thing you said. Optional camera self-view. |
+| `/chat` **Chat** | Type (or dictate) your English and get correction + natural version + a reply. Optional read-aloud. |
+| `/grammar` **Grammar Check** | Paste an email or paragraph. Get it corrected, explained, scored, plus vocabulary upgrades. |
+| `/progress` **Progress** | Practice minutes, day streak, average score, a 14-day chart, and a notebook of mistakes you repeat. |
+
+11 practice topics: free talk, introduce yourself, job interview, IELTS
+speaking, shopping, doctor, restaurant, customer support call, office meetings,
+travel/airport, grammar drills.
+
+## Setup
+
+**1. Add your API key**
+
+Open `.env.local` and paste an AI Gateway key:
+
+```
+AI_GATEWAY_API_KEY=your_key_here
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Get one free at <https://vercel.com/dashboard> → **AI Gateway** → **API Keys**.
+The key works for Claude, GPT and Gemini through one endpoint.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+**2. Run it**
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm install
+npm run dev
+```
 
-## Learn More
+Open <http://localhost:3000>.
 
-To learn more about Next.js, take a look at the following resources:
+## Important: use Chrome or Edge
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The live call uses the browser's built-in speech recognition and speech
+synthesis, so **nothing extra is installed and voice costs nothing**. This
+needs **Google Chrome** or **Microsoft Edge** on desktop, or Chrome on Android.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- Firefox cannot listen to the microphone — the typing box still works.
+- Allow the microphone when the browser asks. If you block it by mistake, click
+  the padlock 🔒 in the address bar and allow it again.
+- The camera button is optional; the call works fine with audio only.
 
-## Deploy on Vercel
+## How the live call works
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Press **Start call**. Sara greets you out loud.
+2. Speak normally. When you stop for 1–2 seconds, your sentence is sent.
+3. Sara replies with her voice, and your corrections appear on screen.
+4. Press **I'm done talking** to send immediately, **Mute** to pause the mic,
+   **End call** to finish and save the session.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Speaking speed and Sara's voice can be changed in the sidebar — slow her down
+if she talks too fast.
+
+## Changing the model
+
+The model is one line in [`src/lib/tutor.ts`](src/lib/tutor.ts):
+
+```ts
+export const MODEL = "anthropic/claude-sonnet-5";
+```
+
+Any AI Gateway model id works, e.g. `openai/gpt-5.4-mini` or
+`google/gemini-3-flash`. A smaller model is cheaper and faster on the call;
+a bigger one gives better corrections.
+
+## Your data
+
+Settings, session history and the mistake notebook live in your browser's
+`localStorage`. There is no database and no login, so nothing leaves your
+computer except the sentences sent to the model for correction.
+
+## Deploying
+
+```bash
+npm i -g vercel
+vercel
+vercel env add AI_GATEWAY_API_KEY
+vercel --prod
+```
+
+The microphone needs HTTPS, which Vercel gives you automatically. On
+`localhost` it works without HTTPS.
+
+## Tech
+
+Next.js 16 (App Router) · React 19 · Tailwind CSS 4 · AI SDK v7 via Vercel AI
+Gateway · Web Speech API for voice.
