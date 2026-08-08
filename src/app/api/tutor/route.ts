@@ -1,4 +1,5 @@
 import { generateText, Output, type ModelMessage } from "ai";
+import { gatewayAuthError } from "@/lib/gateway";
 import { turnSchema } from "@/lib/schemas";
 import {
   MODEL,
@@ -26,15 +27,8 @@ type Body = {
 };
 
 export async function POST(req: Request) {
-  if (!process.env.AI_GATEWAY_API_KEY) {
-    return Response.json(
-      {
-        error:
-          "AI_GATEWAY_API_KEY is not set. Add it to .env.local and restart the dev server.",
-      },
-      { status: 500 },
-    );
-  }
+  const authError = gatewayAuthError();
+  if (authError) return Response.json({ error: authError }, { status: 500 });
 
   const body = (await req.json()) as Body;
 

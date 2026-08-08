@@ -1,4 +1,5 @@
 import { generateText, Output } from "ai";
+import { gatewayAuthError } from "@/lib/gateway";
 import { grammarSchema } from "@/lib/schemas";
 import { MODEL, type ExplainLang, type Level } from "@/lib/tutor";
 
@@ -12,15 +13,8 @@ const LANG_RULE: Record<ExplainLang, string> = {
 };
 
 export async function POST(req: Request) {
-  if (!process.env.AI_GATEWAY_API_KEY) {
-    return Response.json(
-      {
-        error:
-          "AI_GATEWAY_API_KEY is not set. Add it to .env.local and restart the dev server.",
-      },
-      { status: 500 },
-    );
-  }
+  const authError = gatewayAuthError();
+  if (authError) return Response.json({ error: authError }, { status: 500 });
 
   const {
     text,

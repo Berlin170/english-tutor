@@ -3,6 +3,7 @@ import {
   streamText,
   type UIMessage,
 } from "ai";
+import { gatewayAuthError } from "@/lib/gateway";
 import {
   MODEL,
   buildSystemPrompt,
@@ -18,12 +19,8 @@ export const maxDuration = 60;
  * text-to-speech).
  */
 export async function POST(req: Request) {
-  if (!process.env.AI_GATEWAY_API_KEY) {
-    return new Response(
-      "AI_GATEWAY_API_KEY is not set. Add it to .env.local and restart the dev server.",
-      { status: 500 },
-    );
-  }
+  const authError = gatewayAuthError();
+  if (authError) return new Response(authError, { status: 500 });
 
   const {
     messages,
