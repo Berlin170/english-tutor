@@ -1,4 +1,4 @@
-import { generateText, Output } from "ai";
+import { Output, streamText } from "ai";
 import {
   DEFAULT_STORY_MODEL,
   MAX_STORY_TOKENS,
@@ -8,7 +8,7 @@ import {
 import { storySchema } from "@/lib/schemas";
 import { LEVELS, type Level } from "@/lib/tutor";
 
-export const maxDuration = 60;
+export const maxDuration = 300;
 
 /**
  * Generates one graded reading passage.
@@ -16,6 +16,13 @@ export const maxDuration = 60;
  * This is the only route that does NOT use Claude - see `lib/gonka.ts` for
  * why. It is also the only route with no conversation history: every request
  * is a fresh story, so there is nothing to stream back turn by turn.
+ *
+ * It still asks Gonka to stream, even though the learner gets one finished
+ * object. Gonka's endpoint drops any request that has sent no bytes for 150
+ * seconds, and a full story - passage, glossary and five questions - takes
+ * longer than that to generate in one blocking call, so the non-streaming
+ * version always died with IDLE_TIMEOUT. Streaming keeps tokens trickling
+ * over the wire, which keeps that timer from ever firing.
  */
 
 type Body = {
@@ -54,10 +61,16 @@ RULES:
 - Glossary meanings and grammar notes are written in Roman Urdu (Urdu in English letters, e.g. "khareedna"). The story itself and the questions stay in pure English.
 - Never use Urdu script. Never use emoji or markdown.
 - Every glossary word must actually appear in the story.
-- Every question must be answerable from the story alone.`;
+- Every question must be answerable from the story alone.
+
+LENGTHS - count these before you answer, they are not suggestions:
+- "paragraphs" must hold 5 to 8 separate strings. One string is one paragraph of 2 to 4 sentences. Never return the whole story as a single string.
+- "glossary" must hold 6 to 10 words, in the order they appear in the story.
+- "questions" must hold exactly 5 questions, each with exactly 3 options.
+- Every "why" is a complete Roman Urdu sentence of at least four words, explaining why that option is right. Never answer with one word.`;
 
   try {
-    const result = await generateText({
+    const result = streamText({
       model: storyModel(DEFAULT_STORY_MODEL),
       system,
       prompt: `Write a story about: ${topic}`,
@@ -65,7 +78,10 @@ RULES:
       output: Output.object({ schema: storySchema }),
     });
 
-    return Response.json(result.output);
+    // Awaiting the parsed output drains the stream to the end, which is what
+    // keeps Gonka's idle timer quiet. The learner still receives one finished
+    // story rather than a half-written one.
+    return Response.json(await result.output);
   } catch (err) {
     console.error("[/api/story]", err);
     return Response.json(

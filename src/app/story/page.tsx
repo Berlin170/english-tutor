@@ -147,7 +147,8 @@ export default function StoryPage() {
 
       {loading && (
         <p className="text-sm text-muted">
-          Kahani likhi ja rahi hai... thora intezaar karo (10-20 seconds).
+          Kahani likhi ja rahi hai... thora intezaar karo (2-3 minutes). Page
+          band mat karo.
         </p>
       )}
 

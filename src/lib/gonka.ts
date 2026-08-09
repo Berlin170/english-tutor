@@ -36,8 +36,15 @@ export const STORY_MODELS = [
 
 export const DEFAULT_STORY_MODEL = STORY_MODELS[0].id;
 
-/** Max output tokens for one story. Generous - the whole point of this provider. */
-export const MAX_STORY_TOKENS = 4000;
+/**
+ * Max output tokens for one story. Generous - the whole point of this provider.
+ *
+ * 4000 was not enough: Kimi spends a few hundred tokens thinking before it
+ * writes, and the budget covers that as well as the story, so a full passage
+ * with its glossary and five questions was being cut off mid-JSON and failing
+ * to parse. Do not lower this below ~8000 without re-testing /api/story.
+ */
+export const MAX_STORY_TOKENS = 8000;
 
 export function storyAuthError(): string | null {
   if (!process.env.GONKA_API_KEY) {
