@@ -18,7 +18,7 @@ export type MistakeRecord = {
 export type SessionRecord = {
   id: string;
   at: number;
-  kind: "call" | "chat" | "grammar" | "quiz";
+  kind: "call" | "chat" | "grammar" | "quiz" | "story";
   scenarioId: string;
   /** Seconds of practice. */
   seconds: number;

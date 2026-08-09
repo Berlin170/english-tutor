@@ -18,6 +18,15 @@ const MODES = [
     accent: "from-sky-500 to-blue-500",
   },
   {
+    href: "/story",
+    emoji: "📚",
+    title: "Story Reader",
+    subtitle: "Kahani parho",
+    body: "A new English story for your level on any topic. Tap any hard word for its Urdu meaning, listen to it read aloud, then answer 5 questions.",
+    cta: "Read a story",
+    accent: "from-rose-500 to-pink-500",
+  },
+  {
     href: "/call",
     emoji: "🎙️",
     title: "Live Call",

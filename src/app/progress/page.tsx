@@ -129,7 +129,9 @@ export default function ProgressPage() {
                         ? "💬"
                         : s.kind === "quiz"
                           ? "📖"
-                          : "✍️"}{" "}
+                          : s.kind === "story"
+                            ? "📚"
+                            : "✍️"}{" "}
                     {getScenario(s.scenarioId).label}
                     <span className="block text-xs text-muted">
                       {new Date(s.at).toLocaleString()}

@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 const LINKS = [
   { href: "/", label: "Dashboard", emoji: "🏠" },
   { href: "/tenses", label: "Tenses", emoji: "📖" },
+  { href: "/story", label: "Stories", emoji: "📚" },
   { href: "/call", label: "Live Call", emoji: "🎙️" },
   { href: "/chat", label: "Chat", emoji: "💬" },
   { href: "/grammar", label: "Grammar Check", emoji: "✍️" },
