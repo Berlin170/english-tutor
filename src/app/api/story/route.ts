@@ -64,10 +64,11 @@ RULES:
 - Every question must be answerable from the story alone.
 
 LENGTHS - count these before you answer, they are not suggestions:
-- "paragraphs" must hold 5 to 8 separate strings. One string is one paragraph of 2 to 4 sentences. Never return the whole story as a single string.
-- "glossary" must hold 6 to 10 words, in the order they appear in the story.
+- "paragraphs" must hold exactly 5 separate strings. One string is one paragraph of 2 to 3 sentences. Never return the whole story as a single string.
+- "glossary" must hold exactly 6 words, in the order they appear in the story. It is never empty. Even in the simplest story, pick the 6 words a beginner is most likely to pause on and explain those - an easy word explained is still useful.
 - "questions" must hold exactly 5 questions, each with exactly 3 options.
-- Every "why" is a complete Roman Urdu sentence of at least four words, explaining why that option is right. Never answer with one word.`;
+- Every "why" is one short Roman Urdu sentence, four to twelve words, explaining why that option is right. Never answer with one word.
+- "grammarNote" is never empty, and is at most three short lines. Name the tense the story uses and quote one sentence from the story as the example.`;
 
   try {
     const result = streamText({
@@ -84,10 +85,19 @@ LENGTHS - count these before you answer, they are not suggestions:
     return Response.json(await result.output);
   } catch (err) {
     console.error("[/api/story]", err);
+
+    // Gonka sometimes finishes the request having sent no content at all -
+    // its own headers show the model queueing behind other work. The SDK
+    // reports that as a parse failure, which is true but means nothing to a
+    // learner, so it becomes a plain "try again" instead.
+    const emptyReply =
+      err instanceof Error && err.name === "AI_NoObjectGeneratedError";
+
     return Response.json(
       {
-        error:
-          err instanceof Error
+        error: emptyReply
+          ? "Story writer was busy and sent nothing back. Please press the button again - it usually works the second time."
+          : err instanceof Error
             ? err.message
             : "Could not write the story. Please try again.",
       },
